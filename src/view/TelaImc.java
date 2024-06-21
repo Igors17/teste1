@@ -1,5 +1,7 @@
 package view;
 
+import model.Imc;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,7 +12,7 @@ public class TelaImc {
     private JPanel painelTitulo = new JPanel();
     private JLabel labelTitulo = new JLabel("Índice de massa Corporal");
     private JLabel lbpeso = new JLabel("peso:");
-    private JTextField txtPeso =new JTextField();
+    private JTextField txtPeso = new JTextField();
     private JLabel lbTituloResultadoImc = new JLabel("Resultado do IMC");
     private JLabel lbResultadoImc = new JLabel("");
     private JLabel lbStatusIMC = new JLabel("");
@@ -21,6 +23,11 @@ public class TelaImc {
     private String imagePath = "../images/";
     private Icon iconBtnCalcular = new ImageIcon(getClass().getResource(imagePath + "calc2.png"));
     private Icon iconBtnLimpar = new ImageIcon(getClass().getResource(imagePath + "restart24.png"));
+
+    int peso = 0;
+    double altura = 0.0;
+
+
 
     public TelaImc(){
         criarTela();
@@ -117,7 +124,66 @@ public class TelaImc {
         txtPeso.requestFocus();
     }
 
-    private void calacularImc(){
-        //FEATURE IN DEVELOPMENT
+    Imc imc = new Imc();
+
+    private void calacularImc() {
+
+        if (validarDados()) {
+
+            imc.setPeso(peso);
+            imc.setAltura(altura);
+
+            String resultImc = String.valueOf(imc.getImc());
+
+
+            if (imc.getImc() <= 18.5 || imc.getImc() <= 25.0) {
+                painelTitulo.setBackground(Color.GREEN);
+                lbResultadoImc.setBackground(Color.GREEN);
+            } else {
+                painelTitulo.setBackground(Color.RED);
+                lbResultadoImc.setBackground(Color.RED);
+            }
+
+
+
+            lbResultadoImc.setText(String.format("%.2f" , imc.getImc()).replace(",", ","));
+            lbResultadoImc.setText(imc.getStatus());
+
+
+        }
     }
+    private Boolean validarDados() {
+        try{
+
+           peso = Integer.parseInt(txtPeso.getText().trim());
+
+
+        } catch (NumberFormatException erro) {
+            System.out.println(erro);
+            JOptionPane.showMessageDialog(
+                    null,
+                    "O peso deve ser um valor númerico !!",
+                    "valor inválido",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return false;
+        }
+
+        try {
+            altura = Double.parseDouble(txtAltura.getText().replace(",", ",").trim());
+        } catch (NumberFormatException erro){
+            System.out.println(erro);
+            JOptionPane.showMessageDialog(
+                    null,
+                    "O peso deve ser um valor númerico !!",
+                    "valor inválido",
+                    JOptionPane.ERROR_MESSAGE
+
+            );
+            return false;
+        }
+
+        return true;
+    }
+
 }
